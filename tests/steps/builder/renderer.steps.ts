@@ -108,11 +108,14 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       createModule(modulePath, docString);
     });
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation((msg: string) => {
@@ -158,11 +161,14 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       createModule(modulePath, "### Quick Start\n\nBegin here.");
     });
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation(() => {});
@@ -184,28 +190,37 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       state.metadata.document.title = title;
     });
 
-    And("sections:", (_ctx: unknown, table: Array<{ title: string; tag: string; module: string }>) => {
-      for (const row of table) {
-        const section: Section = {
-          title: row.title,
-          tags: [row.tag],
-          subsections: [{ path: row.module, tags: [row.tag], description: "Test module" }],
-        };
-        state!.metadata.sections.push(section);
+    And(
+      "sections:",
+      (_ctx: unknown, table: Array<{ title: string; tag: string; module: string }>) => {
+        for (const row of table) {
+          const section: Section = {
+            title: row.title,
+            tags: [row.tag],
+            subsections: [{ path: row.module, tags: [row.tag], description: "Test module" }],
+          };
+          state!.metadata.sections.push(section);
+        }
       }
-    });
+    );
 
-    And("modules with content:", (_ctx: unknown, table: Array<{ path: string; content: string }>) => {
-      for (const row of table) {
-        createModule(row.path, row.content);
+    And(
+      "modules with content:",
+      (_ctx: unknown, table: Array<{ path: string; content: string }>) => {
+        for (const row of table) {
+          createModule(row.path, row.content);
+        }
       }
-    });
+    );
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation(() => {});
@@ -248,15 +263,21 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       }
     );
 
-    And("module {string} contains {string}", (_ctx: unknown, modulePath: string, content: string) => {
-      createModule(modulePath, content);
-    });
+    And(
+      "module {string} contains {string}",
+      (_ctx: unknown, modulePath: string, content: string) => {
+        createModule(modulePath, content);
+      }
+    );
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation(() => {});
@@ -292,15 +313,21 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       }
     );
 
-    And("module {string} contains {string}", (_ctx: unknown, modulePath: string, content: string) => {
-      createModule(modulePath, content);
-    });
+    And(
+      "module {string} contains {string}",
+      (_ctx: unknown, modulePath: string, content: string) => {
+        createModule(modulePath, content);
+      }
+    );
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation(() => {});
@@ -333,9 +360,12 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       }
     );
 
-    And("module {string} contains {string}", (_ctx: unknown, modulePath: string, content: string) => {
-      createModule(modulePath, content);
-    });
+    And(
+      "module {string} contains {string}",
+      (_ctx: unknown, modulePath: string, content: string) => {
+        createModule(modulePath, content);
+      }
+    );
 
     And(
       "an additive layer {string} with tags {string} and output {string}",
@@ -380,9 +410,12 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       }
     );
 
-    And("module {string} contains {string}", (_ctx: unknown, modulePath: string, content: string) => {
-      createModule(modulePath, content);
-    });
+    And(
+      "module {string} contains {string}",
+      (_ctx: unknown, modulePath: string, content: string) => {
+        createModule(modulePath, content);
+      }
+    );
 
     And(
       "an additive layer {string} with tags {string}, output {string}, and description {string}",
@@ -425,11 +458,14 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       }
     );
 
-    And("a variation {string} with tags {string}", (_ctx: unknown, name: string, tagsStr: string) => {
-      const tags = tagsStr.split(",").map((t) => t.trim());
-      state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
-      state!.metadata.variations.push(state!.variation);
-    });
+    And(
+      "a variation {string} with tags {string}",
+      (_ctx: unknown, name: string, tagsStr: string) => {
+        const tags = tagsStr.split(",").map((t) => t.trim());
+        state!.variation = { name, path: "/", tags, budget_tokens: 8000 };
+        state!.metadata.variations.push(state!.variation);
+      }
+    );
 
     When("building the variation", () => {
       logSpy = vi.spyOn(colors, "log").mockImplementation((msg: string) => {

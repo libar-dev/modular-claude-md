@@ -462,7 +462,11 @@ function cmdInfo(config: CLIConfig): void {
       // Show module with error indicator if issues found
       const hasErrors = issues.some((i) => i.severity === "error");
       const hasWarnings = issues.some((i) => i.severity === "warning");
-      const indicator = hasErrors ? `${colors.red}✗${colors.reset} ` : hasWarnings ? `${colors.yellow}⚠${colors.reset} ` : "";
+      const indicator = hasErrors
+        ? `${colors.red}✗${colors.reset} `
+        : hasWarnings
+          ? `${colors.yellow}⚠${colors.reset} `
+          : "";
 
       log(`    ${indicator}${fileName} (${lines} lines)${extraTags}`, "dim");
 
@@ -478,7 +482,10 @@ function cmdInfo(config: CLIConfig): void {
     }
   }
 
-  log(`\n${colors.cyan}Total: ${totalModules} modules, ${totalLines} lines${colors.reset}`, "reset");
+  log(
+    `\n${colors.cyan}Total: ${totalModules} modules, ${totalLines} lines${colors.reset}`,
+    "reset"
+  );
 
   // Section 2.5: Structure Issues
   if (allIssues.length > 0) {
@@ -501,8 +508,14 @@ function cmdInfo(config: CLIConfig): void {
       }
     }
 
-    log(`\n${colors.dim}Expected structure: ### (module top-level) → #### (subsection)${colors.reset}`, "reset");
-    log(`${colors.dim}Note: ## is reserved for section headers in the built output${colors.reset}`, "reset");
+    log(
+      `\n${colors.dim}Expected structure: ### (module top-level) → #### (subsection)${colors.reset}`,
+      "reset"
+    );
+    log(
+      `${colors.dim}Note: ## is reserved for section headers in the built output${colors.reset}`,
+      "reset"
+    );
   } else {
     logSection("Structure Validation");
     log("✓ All modules have correct heading structure", "green");
@@ -521,7 +534,9 @@ function cmdInfo(config: CLIConfig): void {
   for (const section of metadata.sections) {
     for (const sub of section.subsections) {
       const fileName = (sub.path.split("/").pop() || sub.path).substring(0, 28).padEnd(30);
-      const tagRow = allTags.map((t) => (sub.tags.includes(t) ? "  ✓".padEnd(12) : "".padEnd(12))).join(" ");
+      const tagRow = allTags
+        .map((t) => (sub.tags.includes(t) ? "  ✓".padEnd(12) : "".padEnd(12)))
+        .join(" ");
       console.log(`${fileName} ${tagRow}`);
     }
   }
@@ -537,7 +552,10 @@ function cmdInfo(config: CLIConfig): void {
 
     log(`\n${colors.bright}${variation.name}${colors.reset} → ${variation.path}`, "reset");
     log(`  Tags: ${variation.tags.join(", ")}`, "dim");
-    log(`  Modules: ${modules.length} | Lines: ${varLines} | Budget: ${variation.budget_tokens} tokens`, "dim");
+    log(
+      `  Modules: ${modules.length} | Lines: ${varLines} | Budget: ${variation.budget_tokens} tokens`,
+      "dim"
+    );
     if (variation.description) {
       log(`  ${variation.description}`, "dim");
     }
@@ -574,12 +592,21 @@ function cmdInfo(config: CLIConfig): void {
       log(`  Modules: ${modules.length} | Lines: ${layerLines}`, "dim");
 
       if (overlapCount > 0) {
-        log(`  ${colors.yellow}Overlap: ${overlapCount} modules already in variations${colors.reset}`, "reset");
+        log(
+          `  ${colors.yellow}Overlap: ${overlapCount} modules already in variations${colors.reset}`,
+          "reset"
+        );
       }
       if (uniqueModules.length > 0) {
-        log(`  ${colors.green}Unique: ${uniqueModules.map((p) => p.split("/").pop()).join(", ")}${colors.reset}`, "reset");
+        log(
+          `  ${colors.green}Unique: ${uniqueModules.map((p) => p.split("/").pop()).join(", ")}${colors.reset}`,
+          "reset"
+        );
       } else if (modules.length > 0) {
-        log(`  ${colors.yellow}⚠ No unique content - all modules overlap with variations${colors.reset}`, "reset");
+        log(
+          `  ${colors.yellow}⚠ No unique content - all modules overlap with variations${colors.reset}`,
+          "reset"
+        );
       }
       if (layer.description) {
         log(`  ${layer.description}`, "dim");

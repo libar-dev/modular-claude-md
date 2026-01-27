@@ -33,13 +33,14 @@ See [docs/framework-guidelines.md](./docs/framework-guidelines.md) for the compl
 #### Subtopic             ← Subsections within module
 ```
 
-| Location | Heading Level | Example |
-|----------|---------------|---------|
-| Section header (auto-generated) | `##` (H2) | `## Core Concepts` |
-| Module top-level heading | `###` (H3) | `### The Third Way` |
-| Module subsection | `####` (H4) | `#### Key Rules` |
+| Location                        | Heading Level | Example             |
+| ------------------------------- | ------------- | ------------------- |
+| Section header (auto-generated) | `##` (H2)     | `## Core Concepts`  |
+| Module top-level heading        | `###` (H3)    | `### The Third Way` |
+| Module subsection               | `####` (H4)   | `#### Key Rules`    |
 
 The `info` command validates this structure and reports errors for modules that:
+
 - Start with `##` (too shallow - conflicts with section headers)
 - Start with `####` or deeper (too deep - skips hierarchy levels)
 - Skip heading levels (e.g., `###` directly to `#####`)
@@ -140,21 +141,21 @@ npx modular-claude-md manifest
 
 ### Capabilities (v2.1.20+)
 
-| Capability | Description |
-|------------|-------------|
-| **CLI argument** | `claude --add-dir <path>` - add at startup |
-| **Multiple directories** | `claude --add-dir ./a --add-dir ./b` - combine layers |
-| **Mid-session** | `/add-dir <path>` - expand workspace dynamically |
-| **CLAUDE.md loading** | Requires `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` |
+| Capability               | Description                                               |
+| ------------------------ | --------------------------------------------------------- |
+| **CLI argument**         | `claude --add-dir <path>` - add at startup                |
+| **Multiple directories** | `claude --add-dir ./a --add-dir ./b` - combine layers     |
+| **Mid-session**          | `/add-dir <path>` - expand workspace dynamically          |
+| **CLAUDE.md loading**    | Requires `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` |
 
 ### Behavior
 
-| Aspect | Behavior |
-|--------|----------|
-| **Tool access** | `--add-dir` always grants Read/Glob/Grep access to the directory |
-| **CLAUDE.md loading** | Only when env var is set; disabled by default |
-| **Multiple CLAUDE.md** | All loaded and merged (root + each --add-dir) |
-| **File discovery** | Looks for `CLAUDE.md` or `.claude/CLAUDE.md` in each directory |
+| Aspect                   | Behavior                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| **Tool access**          | `--add-dir` always grants Read/Glob/Grep access to the directory              |
+| **CLAUDE.md loading**    | Only when env var is set; disabled by default                                 |
+| **Multiple CLAUDE.md**   | All loaded and merged (root + each --add-dir)                                 |
+| **File discovery**       | Looks for `CLAUDE.md` or `.claude/CLAUDE.md` in each directory                |
 | **Subdirectory loading** | Standard subdirectory CLAUDE.md discovery also applies within --add-dir paths |
 
 ### Environment Variable
@@ -168,11 +169,11 @@ Without this variable, `--add-dir` only extends file access permissions—no CLA
 
 ### Path Resolution
 
-| Input | Resolution |
-|-------|------------|
+| Input         | Resolution                              |
+| ------------- | --------------------------------------- |
 | Relative path | Resolved from current working directory |
-| Absolute path | Used as-is |
-| `~` expansion | Supported (e.g., `~/projects/shared`) |
+| Absolute path | Used as-is                              |
+| `~` expansion | Supported (e.g., `~/projects/shared`)   |
 
 ## Using with This Package
 

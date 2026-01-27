@@ -90,19 +90,22 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       state!.entries = generateManifestEntries(state!.metadata);
     });
 
-    Then("there should be {int} manifest entries with correct aliases and paths", (_ctx: unknown, count: number) => {
-      expect(state!.entries.length).toBe(count);
-      // Verify testing entry
-      const testingEntry = state!.entries.find((e) => e.name === "testing");
-      expect(testingEntry).toBeDefined();
-      expect(testingEntry!.alias).toBe("claude-testing");
-      expect(testingEntry!.addDirPath).toBe(".claude-layers/testing");
-      // Verify advanced entry
-      const advancedEntry = state!.entries.find((e) => e.name === "advanced");
-      expect(advancedEntry).toBeDefined();
-      expect(advancedEntry!.alias).toBe("claude-advanced");
-      expect(advancedEntry!.addDirPath).toBe(".claude-layers/advanced");
-    });
+    Then(
+      "there should be {int} manifest entries with correct aliases and paths",
+      (_ctx: unknown, count: number) => {
+        expect(state!.entries.length).toBe(count);
+        // Verify testing entry
+        const testingEntry = state!.entries.find((e) => e.name === "testing");
+        expect(testingEntry).toBeDefined();
+        expect(testingEntry!.alias).toBe("claude-testing");
+        expect(testingEntry!.addDirPath).toBe(".claude-layers/testing");
+        // Verify advanced entry
+        const advancedEntry = state!.entries.find((e) => e.name === "advanced");
+        expect(advancedEntry).toBeDefined();
+        expect(advancedEntry!.alias).toBe("claude-advanced");
+        expect(advancedEntry!.addDirPath).toBe(".claude-layers/advanced");
+      }
+    );
   });
 
   Scenario("Generate empty entries when no additive variations", ({ Given, When, Then }) => {
@@ -172,9 +175,12 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(state!.content).toContain(`alias ${alias}=`);
     });
 
-    And("the content should contain description comment {string}", (_ctx: unknown, desc: string) => {
-      expect(state!.content).toContain(`# ${desc}`);
-    });
+    And(
+      "the content should contain description comment {string}",
+      (_ctx: unknown, desc: string) => {
+        expect(state!.content).toContain(`# ${desc}`);
+      }
+    );
 
     And("the content should contain the claude-with helper function", () => {
       expect(state!.content).toContain("claude-with()");
@@ -205,7 +211,9 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
       expect(state!.content).toContain("alias claude-advanced=");
       // Verify claude-full alias with both paths
       expect(state!.content).toContain("alias claude-full=");
-      const fullAliasLine = state!.content.split("\n").find((line) => line.includes("alias claude-full="));
+      const fullAliasLine = state!.content
+        .split("\n")
+        .find((line) => line.includes("alias claude-full="));
       expect(fullAliasLine).toContain(".claude-layers/testing");
       expect(fullAliasLine).toContain(".claude-layers/advanced");
     });

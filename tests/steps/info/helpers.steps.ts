@@ -88,11 +88,14 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
   // Module Line Counting
   // ===========================================================================
   Scenario("Count lines in existing module", ({ Given, When, Then }) => {
-    Given("a module {string} with sample content having {int} lines", (_ctx: unknown, modulePath: string, _lineCount: number) => {
-      state = initState();
-      // Create a module with exactly 4 lines
-      createModule(modulePath, "### Introduction\nWelcome to the project.\nThis is line 3.\n");
-    });
+    Given(
+      "a module {string} with sample content having {int} lines",
+      (_ctx: unknown, modulePath: string, _lineCount: number) => {
+        state = initState();
+        // Create a module with exactly 4 lines
+        createModule(modulePath, "### Introduction\nWelcome to the project.\nThis is line 3.\n");
+      }
+    );
 
     When("counting lines for {string}", (_ctx: unknown, modulePath: string) => {
       state!.lineCount = getModuleLines(state!.tempDir, modulePath);
