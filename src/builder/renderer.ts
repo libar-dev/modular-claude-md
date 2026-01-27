@@ -112,7 +112,9 @@ export function buildAdditiveContent(
     parts.push(`> ${layer.description}`);
     parts.push("");
   }
-  parts.push(`> **Note:** This is an additive layer. Load with: \`claude --add-dir ${layer.output_dir}\``);
+  parts.push(
+    `> **Note:** This is an additive layer. Load with: \`claude --add-dir ${layer.output_dir}\``
+  );
   parts.push("");
   parts.push("---");
   parts.push("");

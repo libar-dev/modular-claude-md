@@ -82,9 +82,9 @@ export function generateManifestContent(metadata: Metadata): string {
   lines.push("# Function to load specific layers by name");
   lines.push("# Usage: claude-with delivery-process testing");
   lines.push("claude-with() {");
-  lines.push("  local dirs=\"\"");
-  lines.push("  for layer in \"$@\"; do");
-  lines.push("    dirs=\"$dirs --add-dir .claude-layers/$layer\"");
+  lines.push('  local dirs=""');
+  lines.push('  for layer in "$@"; do');
+  lines.push('    dirs="$dirs --add-dir .claude-layers/$layer"');
   lines.push("  done");
   lines.push("  claude $dirs");
   lines.push("}");

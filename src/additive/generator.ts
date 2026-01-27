@@ -7,11 +7,7 @@
 import type { Metadata, AdditiveVariation, BuildResult } from "../types.js";
 import { buildAdditiveContent } from "../builder/renderer.js";
 import { countMatchingModules } from "../builder/matcher.js";
-import {
-  writeVariationFile,
-  getAdditiveOutputPath,
-  createBuildResult,
-} from "../utils/writer.js";
+import { writeVariationFile, getAdditiveOutputPath, createBuildResult } from "../utils/writer.js";
 import { log, logSection } from "../utils/colors.js";
 
 /**
@@ -38,7 +34,7 @@ export function generateAdditiveLayer(
 ): BuildResult {
   const content = buildAdditiveContent(metadata, layer, baseDir);
   const outputPath = getAdditiveOutputPath(layer, projectRoot);
-  const budget = DEFAULT_ADDITIVE_BUDGET;
+  const budget = layer.budget_tokens ?? DEFAULT_ADDITIVE_BUDGET;
 
   writeVariationFile(outputPath, content, budget, preview);
 
@@ -92,9 +88,6 @@ export function generateAllAdditiveLayers(
  * @param name - Layer name to find
  * @returns The additive layer or undefined
  */
-export function getAdditiveLayer(
-  metadata: Metadata,
-  name: string
-): AdditiveVariation | undefined {
+export function getAdditiveLayer(metadata: Metadata, name: string): AdditiveVariation | undefined {
   return metadata.additive_variations?.find((layer) => layer.name === name);
 }

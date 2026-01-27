@@ -4,11 +4,7 @@
  * @module @libar-dev/modular-claude-md/additive
  */
 
-export {
-  generateAdditiveLayer,
-  generateAllAdditiveLayers,
-  getAdditiveLayer,
-} from "./generator.js";
+export { generateAdditiveLayer, generateAllAdditiveLayers, getAdditiveLayer } from "./generator.js";
 
 export {
   generateManifestEntries,

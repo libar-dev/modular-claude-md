@@ -21,10 +21,7 @@ export function subsectionMatchesTags(subsection: Subsection, tags: string[]): b
 /**
  * Check if a subsection matches a complete variation.
  */
-export function subsectionMatchesVariation(
-  subsection: Subsection,
-  variation: Variation
-): boolean {
+export function subsectionMatchesVariation(subsection: Subsection, variation: Variation): boolean {
   return subsectionMatchesTags(subsection, variation.tags);
 }
 

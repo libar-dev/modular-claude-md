@@ -10,6 +10,17 @@ Modular CLAUDE.md generator - build context-specific AI coding instructions with
 - **Additive Mode**: Generate layer files for Claude Code's `--add-dir` feature
 - **Zero Dependencies**: Pure Node.js built-ins only
 
+## Framework Guidelines
+
+This package includes [framework guidelines](./docs/framework-guidelines.md) for developing effective CLAUDE.md content:
+
+- **Evidence-based inclusion** - Test patterns before adding them
+- **Effectiveness-driven sizing** - Token allocation based on impact, not arbitrary limits
+- **Evolutionary approach** - Guidelines adapt based on what works
+- **Module splitting** - Large concepts can be split with shared tags
+
+See [docs/framework-guidelines.md](./docs/framework-guidelines.md) for the complete guide.
+
 ## Installation
 
 ```bash
@@ -25,6 +36,7 @@ npx modular-claude-md init
 ```
 
 Creates:
+
 ```
 _claude-md/
 ├── metadata.json        # Configuration
@@ -88,16 +100,16 @@ npx modular-claude-md manifest
 
 ## CLI Commands
 
-| Command | Description |
-|---------|-------------|
-| `modular-claude-md build` | Build all complete variations |
-| `modular-claude-md build --variation=X` | Build specific variation |
-| `modular-claude-md build --preview` | Preview without writing |
-| `modular-claude-md validate` | Validate configuration |
-| `modular-claude-md additive` | Generate all additive layers |
-| `modular-claude-md additive --layer=X` | Generate specific layer |
-| `modular-claude-md manifest` | Generate shell manifest |
-| `modular-claude-md init` | Initialize _claude-md/ structure |
+| Command                                 | Description                       |
+| --------------------------------------- | --------------------------------- |
+| `modular-claude-md build`               | Build all complete variations     |
+| `modular-claude-md build --variation=X` | Build specific variation          |
+| `modular-claude-md build --preview`     | Preview without writing           |
+| `modular-claude-md validate`            | Validate configuration            |
+| `modular-claude-md additive`            | Generate all additive layers      |
+| `modular-claude-md additive --layer=X`  | Generate specific layer           |
+| `modular-claude-md manifest`            | Generate shell manifest           |
+| `modular-claude-md init`                | Initialize \_claude-md/ structure |
 
 ## Using with Claude Code's --add-dir
 
@@ -134,10 +146,10 @@ import {
   validateMetadata,
   type Metadata,
   type Variation,
-} from '@libar-dev/modular-claude-md';
+} from "@libar-dev/modular-claude-md";
 
 // Load configuration
-const metadata = loadMetadata('_claude-md/metadata.json');
+const metadata = loadMetadata("_claude-md/metadata.json");
 
 // Build a single variation
 const content = buildVariation(metadata, metadata.variations[0]);

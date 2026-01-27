@@ -36,10 +36,7 @@ export function logSection(title: string): void {
 /**
  * Format a success/failure status.
  */
-export function formatStatus(
-  value: number,
-  budget: number
-): { text: string; color: ColorName } {
+export function formatStatus(value: number, budget: number): { text: string; color: ColorName } {
   if (value <= budget) {
     return { text: `✓ within budget`, color: "green" };
   }

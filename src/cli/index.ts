@@ -11,17 +11,17 @@ import type { Metadata, BuildResult } from "../types.js";
 import { loadMetadata, validateMetadata } from "../builder/loader.js";
 import { buildVariationContent } from "../builder/renderer.js";
 import { countMatchingModules } from "../builder/matcher.js";
-import {
-  writeVariationFile,
-  getVariationOutputPath,
-  createBuildResult,
-} from "../utils/writer.js";
+import { writeVariationFile, getVariationOutputPath, createBuildResult } from "../utils/writer.js";
 import { log, logSection, colors } from "../utils/colors.js";
-import { generateAllAdditiveLayers, getAdditiveLayer, generateAdditiveLayer } from "../additive/generator.js";
+import {
+  generateAllAdditiveLayers,
+  getAdditiveLayer,
+  generateAdditiveLayer,
+} from "../additive/generator.js";
 import { writeManifest } from "../additive/manifest.js";
 
 /** CLI configuration */
-interface CLIConfig {
+export interface CLIConfig {
   command: "build" | "validate" | "additive" | "manifest" | "init" | "help";
   variation?: string;
   layer?: string;
@@ -35,8 +35,9 @@ const VERSION = "0.1.0";
 
 /**
  * Parse command-line arguments.
+ * @internal Exported for testing only
  */
-function parseArgs(argv: string[] = process.argv.slice(2)): CLIConfig {
+export function parseArgs(argv: string[] = process.argv.slice(2)): CLIConfig {
   const config: CLIConfig = {
     command: "help",
     preview: false,
@@ -82,7 +83,12 @@ function parseArgs(argv: string[] = process.argv.slice(2)): CLIConfig {
   }
 
   // If no command specified but args exist, default to build
-  if (config.command === "help" && argv.length > 0 && !argv.includes("help") && !argv.includes("--help")) {
+  if (
+    config.command === "help" &&
+    argv.length > 0 &&
+    !argv.includes("help") &&
+    !argv.includes("--help")
+  ) {
     config.command = "build";
   }
 
@@ -136,9 +142,27 @@ ${colors.cyan}ADDITIVE MODE (Claude Code v2.1.20+)${colors.reset}
 }
 
 /**
+ * Validate that required paths exist before running commands.
+ */
+function validatePaths(config: CLIConfig): void {
+  if (!fs.existsSync(config.baseDir)) {
+    log(`Error: Base directory not found: ${config.baseDir}`, "red");
+    log("Use --base-dir to specify the correct path, or run 'init' first", "dim");
+    process.exit(1);
+  }
+
+  if (!fs.existsSync(config.projectRoot)) {
+    log(`Error: Project root not found: ${config.projectRoot}`, "red");
+    log("Use --project-root to specify the correct path", "dim");
+    process.exit(1);
+  }
+}
+
+/**
  * Build command - generate complete variations.
  */
 function cmdBuild(config: CLIConfig): void {
+  validatePaths(config);
   const metadata = loadMetadata(config.metadataPath);
 
   // Filter variations if specific one requested
@@ -186,6 +210,7 @@ function cmdBuild(config: CLIConfig): void {
  * Validate command - check configuration.
  */
 function cmdValidate(config: CLIConfig): void {
+  validatePaths(config);
   logSection("Validating Configuration");
 
   let metadata: Metadata;
@@ -244,6 +269,7 @@ function cmdValidate(config: CLIConfig): void {
  * Additive command - generate layer files.
  */
 function cmdAdditive(config: CLIConfig): void {
+  validatePaths(config);
   const metadata = loadMetadata(config.metadataPath);
 
   if (config.layer) {
@@ -270,9 +296,7 @@ function cmdAdditive(config: CLIConfig): void {
 
   logSection("Complete");
   log(
-    config.preview
-      ? "Run without --preview to write files"
-      : "Additive layers generated",
+    config.preview ? "Run without --preview to write files" : "Additive layers generated",
     "green"
   );
 }
@@ -281,6 +305,7 @@ function cmdAdditive(config: CLIConfig): void {
  * Manifest command - generate shell manifest.
  */
 function cmdManifest(config: CLIConfig): void {
+  validatePaths(config);
   const metadata = loadMetadata(config.metadataPath);
 
   logSection(config.preview ? "Preview Manifest" : "Generating Manifest");
@@ -363,10 +388,7 @@ This is an example module. Replace this with your actual content.
     ],
   };
 
-  fs.writeFileSync(
-    path.join(claudeMdDir, "metadata.json"),
-    JSON.stringify(metadata, null, 2)
-  );
+  fs.writeFileSync(path.join(claudeMdDir, "metadata.json"), JSON.stringify(metadata, null, 2));
 
   log(`✓ Created: ${claudeMdDir}/`, "green");
   log(`✓ Created: ${claudeMdDir}/metadata.json`, "green");
@@ -381,7 +403,7 @@ This is an example module. Replace this with your actual content.
 /**
  * Main entry point.
  */
-async function main(): Promise<void> {
+function main(): void {
   const config = parseArgs();
 
   try {
@@ -412,4 +434,4 @@ async function main(): Promise<void> {
   }
 }
 
-void main();
+main();

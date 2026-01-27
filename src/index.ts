@@ -41,12 +41,7 @@ export type {
 } from "./types.js";
 
 // Builder functions
-export {
-  loadMetadata,
-  readModule,
-  moduleExists,
-  validateMetadata,
-} from "./builder/loader.js";
+export { loadMetadata, readModule, moduleExists, validateMetadata } from "./builder/loader.js";
 
 export {
   subsectionMatchesTags,
@@ -57,15 +52,9 @@ export {
   countMatchingModules,
 } from "./builder/matcher.js";
 
-export {
-  transformPaths,
-  transformAdditiveLayerPaths,
-} from "./builder/transformer.js";
+export { transformPaths, transformAdditiveLayerPaths } from "./builder/transformer.js";
 
-export {
-  buildVariationContent,
-  buildAdditiveContent,
-} from "./builder/renderer.js";
+export { buildVariationContent, buildAdditiveContent } from "./builder/renderer.js";
 
 // Additive mode
 export {

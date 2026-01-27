@@ -62,6 +62,8 @@ export interface AdditiveVariation {
   tags: string[];
   /** Human description of what this layer adds */
   description?: string;
+  /** Optional token budget for the layer (defaults to 2000 if not specified) */
+  budget_tokens?: number;
 }
 
 /**

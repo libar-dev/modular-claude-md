@@ -47,10 +47,7 @@ export function writeVariationFile(
 /**
  * Calculate output path for a complete variation.
  */
-export function getVariationOutputPath(
-  variation: Variation,
-  projectRoot: string
-): string {
+export function getVariationOutputPath(variation: Variation, projectRoot: string): string {
   return variation.path === "/"
     ? path.join(projectRoot, "CLAUDE.md")
     : path.join(projectRoot, variation.path, "CLAUDE.md");
@@ -59,10 +56,7 @@ export function getVariationOutputPath(
 /**
  * Calculate output path for an additive layer.
  */
-export function getAdditiveOutputPath(
-  layer: AdditiveVariation,
-  projectRoot: string
-): string {
+export function getAdditiveOutputPath(layer: AdditiveVariation, projectRoot: string): string {
   return path.join(projectRoot, layer.output_dir, "CLAUDE.md");
 }
 

@@ -107,8 +107,7 @@ export function validateMetadata(
 
   // Check variation output paths exist
   for (const variation of metadata.variations) {
-    const varPath =
-      variation.path === "/" ? projectRoot : path.join(projectRoot, variation.path);
+    const varPath = variation.path === "/" ? projectRoot : path.join(projectRoot, variation.path);
     if (!fs.existsSync(varPath)) {
       warnings.push(`Variation "${variation.name}": output path not found (${variation.path})`);
     }
