@@ -24,6 +24,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist *.tsbuildinfo",
+    "prepare": "pnpm run build",
     "prepublishOnly": "pnpm run build",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -42,13 +43,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/libar-dev/libar-platform.git",
-    "directory": "packages/modular-claude-md"
+    "url": "git+https://github.com/libar-dev/modular-claude-md.git"
   },
   "bugs": {
-    "url": "https://github.com/libar-dev/libar-platform/issues"
+    "url": "https://github.com/libar-dev/modular-claude-md/issues"
   },
-  "homepage": "https://github.com/libar-dev/libar-platform#readme",
+  "homepage": "https://github.com/libar-dev/modular-claude-md#readme",
   "devDependencies": {
     "@amiceli/vitest-cucumber": "^5.2.1",
     "@types/node": "20.10.0",
