@@ -79,3 +79,14 @@ export {
   createBuildResult,
 } from "./utils/writer.js";
 export { log, logSection, colors, formatStatus, type ColorName } from "./utils/colors.js";
+
+// Info command helpers
+export {
+  getModuleLines,
+  getModuleHeadings,
+  collectAllTags,
+  getMatchingModules,
+  validateModuleStructure,
+  type HeadingInfo,
+  type StructureIssue,
+} from "./info/helpers.js";

@@ -19,10 +19,18 @@ import {
   generateAdditiveLayer,
 } from "../additive/generator.js";
 import { writeManifest } from "../additive/manifest.js";
+import {
+  getModuleLines,
+  getModuleHeadings,
+  collectAllTags,
+  getMatchingModules,
+  validateModuleStructure,
+  type StructureIssue,
+} from "../info/helpers.js";
 
 /** CLI configuration */
 export interface CLIConfig {
-  command: "build" | "validate" | "additive" | "manifest" | "init" | "help";
+  command: "build" | "validate" | "additive" | "manifest" | "init" | "info" | "help";
   variation?: string;
   layer?: string;
   preview: boolean;
@@ -57,6 +65,8 @@ export function parseArgs(argv: string[] = process.argv.slice(2)): CLIConfig {
       config.command = "manifest";
     } else if (arg === "init") {
       config.command = "init";
+    } else if (arg === "info") {
+      config.command = "info";
     } else if (arg === "help" || arg === "--help" || arg === "-h") {
       config.command = "help";
     } else if (arg === "--version" || arg === "-v") {
@@ -110,6 +120,7 @@ ${colors.cyan}COMMANDS${colors.reset}
   validate    Validate configuration and module files
   additive    Generate additive layer files for --add-dir
   manifest    Generate shell manifest for layer aliases
+  info        Show information architecture and tag coverage
   init        Initialize _claude-md/ structure
   help        Show this help message
 
@@ -129,6 +140,7 @@ ${colors.cyan}EXAMPLES${colors.reset}
   modular-claude-md additive                 Generate all additive layers
   modular-claude-md additive --layer=testing Generate specific layer
   modular-claude-md manifest                 Generate shell manifest
+  modular-claude-md info                     Show information architecture
 
 ${colors.cyan}ADDITIVE MODE (Claude Code v2.1.20+)${colors.reset}
   Generate layer files for Claude Code's --add-dir feature:
@@ -401,6 +413,217 @@ This is an example module. Replace this with your actual content.
 }
 
 /**
+ * Info command - show information architecture.
+ */
+function cmdInfo(config: CLIConfig): void {
+  validatePaths(config);
+  const metadata = loadMetadata(config.metadataPath);
+
+  // Collect structure issues while iterating
+  const allIssues: StructureIssue[] = [];
+
+  // Section 1: Structure Overview
+  logSection("Information Architecture");
+  log(`\n${colors.bright}Document:${colors.reset} ${metadata.document.title}`, "reset");
+  if (metadata.document.description) {
+    log(`${metadata.document.description}`, "dim");
+  }
+
+  // Section 2: Content Hierarchy
+  logSection("Content Hierarchy");
+  let totalLines = 0;
+  let totalModules = 0;
+
+  for (const section of metadata.sections) {
+    let sectionLines = 0;
+    const moduleCount = section.subsections.length;
+    totalModules += moduleCount;
+
+    for (const sub of section.subsections) {
+      sectionLines += getModuleLines(config.baseDir, sub.path);
+    }
+    totalLines += sectionLines;
+
+    log(`\n${colors.bright}${section.title}${colors.reset}`, "reset");
+    log(`  Tags: ${section.tags.join(", ")}`, "dim");
+    log(`  Modules: ${moduleCount} | Lines: ${sectionLines}`, "dim");
+
+    for (const sub of section.subsections) {
+      const lines = getModuleLines(config.baseDir, sub.path);
+      const fileName = sub.path.split("/").pop() || sub.path;
+      const tagStr = sub.tags.filter((t) => !section.tags.includes(t));
+      const extraTags = tagStr.length > 0 ? ` [+${tagStr.join(", ")}]` : "";
+
+      // Get headings and validate structure
+      const headings = getModuleHeadings(config.baseDir, sub.path);
+      const issues = validateModuleStructure(sub.path, headings);
+      allIssues.push(...issues);
+
+      // Show module with error indicator if issues found
+      const hasErrors = issues.some((i) => i.severity === "error");
+      const hasWarnings = issues.some((i) => i.severity === "warning");
+      const indicator = hasErrors ? `${colors.red}✗${colors.reset} ` : hasWarnings ? `${colors.yellow}⚠${colors.reset} ` : "";
+
+      log(`    ${indicator}${fileName} (${lines} lines)${extraTags}`, "dim");
+
+      // Show headings within the module
+      for (const h of headings) {
+        const indent = "      " + "  ".repeat(h.level - 2); // ## = no extra, ### = 2 spaces, #### = 4 spaces
+        const levelIndicator = "#".repeat(h.level);
+        // Highlight problematic first heading (should be ### = level 3)
+        const isProblematic = h === headings[0] && h.level !== 3;
+        const headingColor = isProblematic ? colors.red : colors.dim;
+        log(`${indent}${headingColor}${levelIndicator}${colors.reset} ${h.text}`, "reset");
+      }
+    }
+  }
+
+  log(`\n${colors.cyan}Total: ${totalModules} modules, ${totalLines} lines${colors.reset}`, "reset");
+
+  // Section 2.5: Structure Issues
+  if (allIssues.length > 0) {
+    logSection("Structure Issues");
+
+    const errors = allIssues.filter((i) => i.severity === "error");
+    const warnings = allIssues.filter((i) => i.severity === "warning");
+
+    if (errors.length > 0) {
+      log(`\n${colors.red}Errors (${errors.length}):${colors.reset}`, "reset");
+      for (const issue of errors) {
+        log(`  ✗ ${issue.module}: ${issue.details}`, "red");
+      }
+    }
+
+    if (warnings.length > 0) {
+      log(`\n${colors.yellow}Warnings (${warnings.length}):${colors.reset}`, "reset");
+      for (const issue of warnings) {
+        log(`  ⚠ ${issue.module}: ${issue.details}`, "yellow");
+      }
+    }
+
+    log(`\n${colors.dim}Expected structure: ### (module top-level) → #### (subsection)${colors.reset}`, "reset");
+    log(`${colors.dim}Note: ## is reserved for section headers in the built output${colors.reset}`, "reset");
+  } else {
+    logSection("Structure Validation");
+    log("✓ All modules have correct heading structure", "green");
+  }
+
+  // Section 3: Tag Coverage Matrix
+  logSection("Tag Coverage");
+  const allTags = collectAllTags(metadata);
+
+  // Header
+  const tagHeader = allTags.map((t) => t.substring(0, 12).padEnd(12)).join(" ");
+  log(`\n${"Module".padEnd(30)} ${tagHeader}`, "bright");
+  log("-".repeat(30 + allTags.length * 13), "dim");
+
+  // Rows
+  for (const section of metadata.sections) {
+    for (const sub of section.subsections) {
+      const fileName = (sub.path.split("/").pop() || sub.path).substring(0, 28).padEnd(30);
+      const tagRow = allTags.map((t) => (sub.tags.includes(t) ? "  ✓".padEnd(12) : "".padEnd(12))).join(" ");
+      console.log(`${fileName} ${tagRow}`);
+    }
+  }
+
+  // Section 4: Variations Composition
+  logSection("Variations (Complete CLAUDE.md)");
+  for (const variation of metadata.variations) {
+    const modules = getMatchingModules(metadata, variation.tags);
+    let varLines = 0;
+    for (const m of modules) {
+      varLines += getModuleLines(config.baseDir, m.path);
+    }
+
+    log(`\n${colors.bright}${variation.name}${colors.reset} → ${variation.path}`, "reset");
+    log(`  Tags: ${variation.tags.join(", ")}`, "dim");
+    log(`  Modules: ${modules.length} | Lines: ${varLines} | Budget: ${variation.budget_tokens} tokens`, "dim");
+    if (variation.description) {
+      log(`  ${variation.description}`, "dim");
+    }
+  }
+
+  // Section 5: Additive Layers Composition
+  if (metadata.additive_variations && metadata.additive_variations.length > 0) {
+    logSection("Additive Layers (--add-dir)");
+
+    // First, get core-mandatory modules for overlap analysis
+    const coreModules = new Set<string>();
+    for (const v of metadata.variations) {
+      const modules = getMatchingModules(metadata, v.tags);
+      modules.forEach((m) => coreModules.add(m.path));
+    }
+
+    for (const layer of metadata.additive_variations) {
+      const modules = getMatchingModules(metadata, layer.tags);
+      let layerLines = 0;
+      let overlapCount = 0;
+      const uniqueModules: string[] = [];
+
+      for (const m of modules) {
+        layerLines += getModuleLines(config.baseDir, m.path);
+        if (coreModules.has(m.path)) {
+          overlapCount++;
+        } else {
+          uniqueModules.push(m.path);
+        }
+      }
+
+      log(`\n${colors.bright}${layer.name}${colors.reset} → ${layer.output_dir}`, "reset");
+      log(`  Tags: ${layer.tags.join(", ")}`, "dim");
+      log(`  Modules: ${modules.length} | Lines: ${layerLines}`, "dim");
+
+      if (overlapCount > 0) {
+        log(`  ${colors.yellow}Overlap: ${overlapCount} modules already in variations${colors.reset}`, "reset");
+      }
+      if (uniqueModules.length > 0) {
+        log(`  ${colors.green}Unique: ${uniqueModules.map((p) => p.split("/").pop()).join(", ")}${colors.reset}`, "reset");
+      } else if (modules.length > 0) {
+        log(`  ${colors.yellow}⚠ No unique content - all modules overlap with variations${colors.reset}`, "reset");
+      }
+      if (layer.description) {
+        log(`  ${layer.description}`, "dim");
+      }
+    }
+
+    // Section 6: Overlap Analysis Summary
+    logSection("Overlap Analysis");
+    log("\nModules appearing in multiple targets:", "bright");
+
+    const moduleTargets = new Map<string, string[]>();
+    for (const v of metadata.variations) {
+      const modules = getMatchingModules(metadata, v.tags);
+      for (const m of modules) {
+        if (!moduleTargets.has(m.path)) moduleTargets.set(m.path, []);
+        moduleTargets.get(m.path)!.push(`var:${v.name}`);
+      }
+    }
+    for (const layer of metadata.additive_variations) {
+      const modules = getMatchingModules(metadata, layer.tags);
+      for (const m of modules) {
+        if (!moduleTargets.has(m.path)) moduleTargets.set(m.path, []);
+        moduleTargets.get(m.path)!.push(`layer:${layer.name}`);
+      }
+    }
+
+    let hasOverlap = false;
+    for (const [modulePath, targets] of moduleTargets) {
+      if (targets.length > 1) {
+        hasOverlap = true;
+        const fileName = modulePath.split("/").pop() || modulePath;
+        log(`  ${fileName}: ${targets.join(", ")}`, "dim");
+      }
+    }
+
+    if (!hasOverlap) {
+      log("  No overlapping modules found", "green");
+    }
+  }
+
+  logSection("Complete");
+}
+
+/**
  * Main entry point.
  */
 function main(): void {
@@ -422,6 +645,9 @@ function main(): void {
         break;
       case "init":
         cmdInit(config);
+        break;
+      case "info":
+        cmdInfo(config);
         break;
       case "help":
       default:
