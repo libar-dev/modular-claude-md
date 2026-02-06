@@ -20,6 +20,11 @@ import {
 } from "../additive/generator.js";
 import { writeManifest } from "../additive/manifest.js";
 import {
+  generateAllIndexes,
+  generateLayerIndex,
+  generateBaseIndex,
+} from "../index-gen/generator.js";
+import {
   getModuleLines,
   getModuleHeadings,
   collectAllTags,
@@ -30,7 +35,7 @@ import {
 
 /** CLI configuration */
 export interface CLIConfig {
-  command: "build" | "validate" | "additive" | "manifest" | "init" | "info" | "help";
+  command: "build" | "validate" | "additive" | "manifest" | "index" | "init" | "info" | "help";
   variation?: string;
   layer?: string;
   preview: boolean;
@@ -63,6 +68,8 @@ export function parseArgs(argv: string[] = process.argv.slice(2)): CLIConfig {
       config.command = "additive";
     } else if (arg === "manifest") {
       config.command = "manifest";
+    } else if (arg === "index") {
+      config.command = "index";
     } else if (arg === "init") {
       config.command = "init";
     } else if (arg === "info") {
@@ -119,6 +126,7 @@ ${colors.cyan}COMMANDS${colors.reset}
   build       Build complete CLAUDE.md variations
   validate    Validate configuration and module files
   additive    Generate additive layer files for --add-dir
+  index       Generate lightweight index files for each layer
   manifest    Generate shell manifest for layer aliases
   info        Show information architecture and tag coverage
   init        Initialize _claude-md/ structure
@@ -139,6 +147,8 @@ ${colors.cyan}EXAMPLES${colors.reset}
   modular-claude-md validate                 Validate configuration
   modular-claude-md additive                 Generate all additive layers
   modular-claude-md additive --layer=testing Generate specific layer
+  modular-claude-md index                    Generate all layer indexes
+  modular-claude-md index --layer=arch       Generate specific layer index
   modular-claude-md manifest                 Generate shell manifest
   modular-claude-md info                     Show information architecture
 
@@ -311,6 +321,45 @@ function cmdAdditive(config: CLIConfig): void {
     config.preview ? "Run without --preview to write files" : "Additive layers generated",
     "green"
   );
+}
+
+/**
+ * Index command - generate lightweight index files for layers.
+ */
+function cmdIndex(config: CLIConfig): void {
+  validatePaths(config);
+  const metadata = loadMetadata(config.metadataPath);
+
+  if (config.layer) {
+    // Generate specific layer index (or "base" for the base index)
+    if (config.layer === "base") {
+      logSection(config.preview ? "Preview Base Index" : "Generating Base Index");
+      log("\n\uD83D\uDCC4 base (core layer)", "bright");
+      generateBaseIndex(metadata, config.baseDir, config.projectRoot, config.preview);
+    } else {
+      const layer = getAdditiveLayer(metadata, config.layer);
+      if (!layer) {
+        log(`Error: Unknown additive layer: ${config.layer}`, "red");
+        const available = metadata.additive_variations?.map((l) => l.name).join(", ") || "(none)";
+        log(`Available: base, ${available}`, "dim");
+        process.exit(1);
+      }
+
+      logSection(config.preview ? "Preview Layer Index" : "Generating Layer Index");
+      log(`\n\uD83D\uDCC4 ${layer.name}`, "bright");
+      if (layer.description) {
+        log(`   ${layer.description}`, "dim");
+      }
+
+      generateLayerIndex(metadata, layer, config.baseDir, config.projectRoot, config.preview);
+    }
+  } else {
+    // Generate all indexes
+    generateAllIndexes(metadata, config.baseDir, config.projectRoot, config.preview);
+  }
+
+  logSection("Complete");
+  log(config.preview ? "Run without --preview to write files" : "Index files generated", "green");
 }
 
 /**
@@ -666,6 +715,9 @@ function main(): void {
         break;
       case "additive":
         cmdAdditive(config);
+        break;
+      case "index":
+        cmdIndex(config);
         break;
       case "manifest":
         cmdManifest(config);

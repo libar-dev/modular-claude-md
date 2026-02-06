@@ -70,6 +70,17 @@ export {
   type ManifestEntry,
 } from "./additive/manifest.js";
 
+// Index generation
+export {
+  generateLayerIndex,
+  generateBaseIndex,
+  generateAllIndexes,
+  getIndexOutputPath,
+  getBaseIndexOutputPath,
+} from "./index-gen/generator.js";
+
+export { buildLayerIndexContent, buildBaseIndexContent } from "./index-gen/renderer.js";
+
 // Utilities
 export { estimateTokens } from "./utils/tokens.js";
 export {

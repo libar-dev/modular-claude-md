@@ -134,6 +134,8 @@ npx modular-claude-md manifest
 | `modular-claude-md validate`            | Validate configuration            |
 | `modular-claude-md additive`            | Generate all additive layers      |
 | `modular-claude-md additive --layer=X`  | Generate specific layer           |
+| `modular-claude-md index`               | Generate layer index files        |
+| `modular-claude-md index --layer=X`     | Generate specific layer index     |
 | `modular-claude-md manifest`            | Generate shell manifest           |
 | `modular-claude-md init`                | Initialize \_claude-md/ structure |
 
@@ -195,6 +197,24 @@ source .claude-layers/manifest.sh
 # Now use aliases
 claude-advanced  # Loads advanced layer
 claude-full      # Loads all layers
+```
+
+## Layer Indexes (Progressive Disclosure)
+
+Generate lightweight index files that summarize each layer's content:
+
+```bash
+npx modular-claude-md index
+```
+
+This creates `{layer-name}-index/` directories alongside the full layer directories. Each index contains an ASCII-boxed table of contents showing the module structure.
+
+```bash
+# Load just the index (lightweight discovery)
+claude --add-dir .claude-layers/architecture-index
+
+# Load the full layer (complete content)
+claude --add-dir .claude-layers/architecture
 ```
 
 ## Programmatic API
