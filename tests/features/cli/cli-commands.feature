@@ -28,6 +28,11 @@ Feature: CLI Commands
     When parsing arguments "additive --layer=advanced"
     Then the layer should be "advanced"
 
+  Scenario: Parse section option
+    When parsing arguments "info --section=layers"
+    Then the command should be "info"
+    And the section should be "layers"
+
   Scenario: Parse base-dir option
     When parsing arguments "build --base-dir=/custom/path"
     Then the base directory should be "/custom/path"
@@ -56,5 +61,7 @@ Feature: CLI Commands
       | validate |
       | additive |
       | manifest |
+      | index    |
       | init     |
+      | info     |
       | help     |

@@ -83,7 +83,41 @@ npx modular-claude-md additive
 npx modular-claude-md manifest
 ```
 
-## Configuration (metadata.json)
+## Content Model
+
+The system has four key concepts:
+
+| Concept                   | Purpose                                                          |
+| ------------------------- | ---------------------------------------------------------------- |
+| **Sections**              | Organizational groups (like chapters) defined in `metadata.json` |
+| **Modules** (subsections) | Individual `.md` files containing instructions                   |
+| **Tags**                  | Labels connecting modules to outputs                             |
+| **Variations / Layers**   | Output targets that select modules by tag                        |
+
+### How Tags Drive Outputs
+
+Tags are the key mechanism. Each module has tags, and each output target selects modules by matching tags:
+
+```
+metadata.json sections:
+  "Core Mental Models" [tags: core-mandatory, architecture]
+    ├── the-third-way.md    [tags: core-mandatory]     → default CLAUDE.md
+    ├── cms-snapshot.md     [tags: architecture]        → architecture layer
+    ├── deciders.md         [tags: architecture]        → architecture layer
+    └── dcb.md              [tags: architecture]        → architecture layer
+
+  "Infrastructure" [tags: core-mandatory, development, repo-infra]
+    ├── component-isolation.md  [tags: core-mandatory]  → default CLAUDE.md
+    ├── durable-functions.md    [tags: development]     → development layer
+    └── packages-subtree.md     [tags: repo-infra]      → repo-infra layer
+```
+
+- **Variations** produce complete `CLAUDE.md` files (e.g., `default` selects all `core-mandatory` modules)
+- **Additive layers** produce supplementary files for `--add-dir` (e.g., `architecture` selects all `architecture`-tagged modules)
+- A module can appear in multiple outputs if it has multiple tags
+- Sections group modules topically; layers cut across sections by tag
+
+### Configuration (metadata.json)
 
 ```json
 {
@@ -126,18 +160,32 @@ npx modular-claude-md manifest
 
 ## CLI Commands
 
-| Command                                 | Description                       |
-| --------------------------------------- | --------------------------------- |
-| `modular-claude-md build`               | Build all complete variations     |
-| `modular-claude-md build --variation=X` | Build specific variation          |
-| `modular-claude-md build --preview`     | Preview without writing           |
-| `modular-claude-md validate`            | Validate configuration            |
-| `modular-claude-md additive`            | Generate all additive layers      |
-| `modular-claude-md additive --layer=X`  | Generate specific layer           |
-| `modular-claude-md index`               | Generate layer index files        |
-| `modular-claude-md index --layer=X`     | Generate specific layer index     |
-| `modular-claude-md manifest`            | Generate shell manifest           |
-| `modular-claude-md init`                | Initialize \_claude-md/ structure |
+| Command                                 | Description                                                |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `modular-claude-md build`               | Build all complete variations                              |
+| `modular-claude-md build --variation=X` | Build specific variation                                   |
+| `modular-claude-md build --preview`     | Preview without writing                                    |
+| `modular-claude-md validate`            | Validate configuration                                     |
+| `modular-claude-md additive`            | Generate all additive layers                               |
+| `modular-claude-md additive --layer=X`  | Generate specific layer                                    |
+| `modular-claude-md index`               | Generate layer index files                                 |
+| `modular-claude-md index --layer=X`     | Generate specific layer index                              |
+| `modular-claude-md manifest`            | Generate shell manifest                                    |
+| `modular-claude-md info`                | Show content hierarchy, layers, tags, and overlap analysis |
+| `modular-claude-md info --section=X`    | Filter to specific section (see below)                     |
+| `modular-claude-md init`                | Initialize \_claude-md/ structure                          |
+
+### `info --section` Values
+
+| Section      | Shows                                                        |
+| ------------ | ------------------------------------------------------------ |
+| `summary`    | Quick overview: module/line counts, variations, layers, tags |
+| `content`    | Full content hierarchy with headings per module              |
+| `structure`  | Structural validation issues (heading levels, gaps)          |
+| `tags`       | Tag coverage matrix (which tags appear in which sections)    |
+| `variations` | Complete CLAUDE.md variation details                         |
+| `layers`     | Additive layer details with unique module lists              |
+| `overlap`    | Modules appearing in multiple outputs                        |
 
 ## Claude Code --add-dir Technical Reference
 

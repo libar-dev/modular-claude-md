@@ -48,6 +48,7 @@ export function getModuleLines(baseDir: string, modulePath: string): number {
 /**
  * Extract headings from a module file.
  * Matches ## through #### (not # which is typically doc title).
+ * Skips headings inside fenced code blocks (``` or ~~~).
  */
 export function getModuleHeadings(baseDir: string, modulePath: string): HeadingInfo[] {
   const filePath = path.join(baseDir, modulePath);
@@ -56,10 +57,20 @@ export function getModuleHeadings(baseDir: string, modulePath: string): HeadingI
   const content = fs.readFileSync(filePath, "utf-8");
   const lines = content.split("\n");
   const headings: HeadingInfo[] = [];
+  let inCodeBlock = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!line) continue;
+
+    // Track fenced code blocks (``` or ~~~, with optional language annotation)
+    if (/^(`{3,}|~{3,})/.test(line)) {
+      inCodeBlock = !inCodeBlock;
+      continue;
+    }
+
+    if (inCodeBlock) continue;
+
     // Match ## through #### (not # which is typically doc title)
     const match = line.match(/^(#{2,4})\s+(.+)$/);
     if (match && match[1] && match[2]) {

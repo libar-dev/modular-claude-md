@@ -192,6 +192,38 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
     });
   });
 
+  Scenario("Ignore headings inside fenced code blocks", ({ Given, When, Then }) => {
+    Given(
+      "a module {string} with headings inside a code block",
+      (_ctx: unknown, modulePath: string) => {
+        state = initState();
+        const content = [
+          "### Real Heading",
+          "",
+          "Some text.",
+          "",
+          "```markdown",
+          "## Fake Heading Inside Code Block",
+          "### Another Fake Heading",
+          "```",
+          "",
+          "### Another Real Heading",
+        ].join("\n");
+        createModule(modulePath, content);
+      }
+    );
+
+    When("extracting headings from {string}", (_ctx: unknown, modulePath: string) => {
+      state!.headings = getModuleHeadings(state!.tempDir, modulePath);
+    });
+
+    Then("only the headings outside the code block should be extracted", () => {
+      expect(state!.headings.length).toBe(2);
+      expect(state!.headings[0]).toEqual({ level: 3, text: "Real Heading", line: 1 });
+      expect(state!.headings[1]).toEqual({ level: 3, text: "Another Real Heading", line: 10 });
+    });
+  });
+
   // ===========================================================================
   // Tag Collection
   // ===========================================================================

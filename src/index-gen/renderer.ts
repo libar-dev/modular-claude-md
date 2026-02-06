@@ -208,7 +208,8 @@ export function buildLayerIndexContent(
   );
   lines.push("");
 
-  // ASCII box
+  // ASCII box (wrapped in code fence for monospace rendering in markdown viewers)
+  lines.push("```");
   lines.push(topBorder());
   lines.push(boxLine(`LAYER INDEX: ${layer.name}`));
   lines.push(boxLine(`${moduleCount} modules ~ ${lineCount} lines`));
@@ -229,6 +230,7 @@ export function buildLayerIndexContent(
   lines.push(emptyLine());
   lines.push(boxLine(`Load full layer: /add-dir ${layer.output_dir}`));
   lines.push(bottomBorder());
+  lines.push("```");
   lines.push("");
 
   return lines.join("\n");
@@ -274,7 +276,8 @@ export function buildBaseIndexContent(metadata: Metadata, baseDir: string): stri
   );
   lines.push("");
 
-  // ASCII box
+  // ASCII box (wrapped in code fence for monospace rendering in markdown viewers)
+  lines.push("```");
   lines.push(topBorder());
   lines.push(boxLine("BASE LAYER INDEX"));
   lines.push(boxLine(`${moduleCount} modules ~ ${lineCount} lines`));
@@ -314,6 +317,7 @@ export function buildBaseIndexContent(metadata: Metadata, baseDir: string): stri
   }
 
   lines.push(bottomBorder());
+  lines.push("```");
   lines.push("");
 
   return lines.join("\n");

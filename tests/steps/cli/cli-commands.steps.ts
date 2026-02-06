@@ -131,6 +131,22 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
     });
   });
 
+  Scenario("Parse section option", ({ When, Then, And }) => {
+    When("parsing arguments {string}", (_ctx: unknown, args: string) => {
+      state = initState();
+      const argv = args.split(" ").filter((a) => a.length > 0);
+      state.config = parseArgs(argv);
+    });
+
+    Then("the command should be {string}", (_ctx: unknown, expected: string) => {
+      expect(state!.config?.command).toBe(expected);
+    });
+
+    And("the section should be {string}", (_ctx: unknown, expected: string) => {
+      expect(state!.config?.section).toBe(expected);
+    });
+  });
+
   Scenario("Parse base-dir option", ({ When, Then }) => {
     When("parsing arguments {string}", (_ctx: unknown, args: string) => {
       state = initState();

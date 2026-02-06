@@ -32,6 +32,11 @@ Feature: Info Command Helpers
     When extracting headings from "docs/title.md"
     Then only the H3 heading should be extracted
 
+  Scenario: Ignore headings inside fenced code blocks
+    Given a module "docs/fenced.md" with headings inside a code block
+    When extracting headings from "docs/fenced.md"
+    Then only the headings outside the code block should be extracted
+
   # Tag Collection
   Scenario: Collect all unique tags from metadata
     Given metadata with sections:
