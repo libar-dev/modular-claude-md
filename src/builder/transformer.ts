@@ -55,7 +55,7 @@ export function transformPaths(content: string, variationPath: string): string {
  * Transform paths for an additive layer's output location.
  *
  * @param content - The markdown content to transform
- * @param outputDir - The layer's output directory (e.g., ".claude-layers/delivery-process")
+ * @param outputDir - The layer's output directory (e.g., ".claude-layers/architect")
  * @returns Transformed content with adjusted paths
  */
 export function transformAdditiveLayerPaths(content: string, outputDir: string): string {

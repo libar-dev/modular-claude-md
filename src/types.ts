@@ -10,7 +10,7 @@
 export interface Subsection {
   /** Relative path to the module file (e.g., "core/the-third-way.md") */
   path: string;
-  /** Tags for filtering (e.g., ["core-mandatory", "delivery-process"]) */
+  /** Tags for filtering (e.g., ["core-mandatory", "architect"]) */
   tags: string[];
   /** Optional description of what the module covers */
   description?: string;
@@ -34,7 +34,7 @@ export interface Section {
  * A complete variation generates a full CLAUDE.md file.
  */
 export interface Variation {
-  /** Unique identifier (e.g., "default", "delivery-process") */
+  /** Unique identifier (e.g., "default", "architect") */
   name: string;
   /** Output location ("/" for root, "/packages/..." for subdirs) */
   path: string;
@@ -54,9 +54,9 @@ export interface Variation {
  * content, not the base/core-mandatory content.
  */
 export interface AdditiveVariation {
-  /** Layer name (e.g., "delivery-process") */
+  /** Layer name (e.g., "architect") */
   name: string;
-  /** Output directory for layer file (e.g., ".claude-layers/delivery-process") */
+  /** Output directory for layer file (e.g., ".claude-layers/architect") */
   output_dir: string;
   /** Tags specific to this layer (should NOT include core-mandatory) */
   tags: string[];
