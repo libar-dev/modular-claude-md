@@ -50,10 +50,10 @@
   },
   "homepage": "https://github.com/libar-dev/modular-claude-md#readme",
   "devDependencies": {
-    "@amiceli/vitest-cucumber": "^5.2.1",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.2",
-    "vitest": "^3.1.4"
+    "@amiceli/vitest-cucumber": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "private": false
 }
